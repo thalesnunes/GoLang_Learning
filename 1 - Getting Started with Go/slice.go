@@ -18,9 +18,8 @@ func main() {
 		}
 		ap, _ = strconv.Atoi(txt)
 		sli = append(sli, ap)
+		sort.SliceStable(sli, func(i, j int) bool { return sli[i] < sli[j] })
+		fmt.Println(sli)
 	}
 	sort.SliceStable(sli, func(i, j int) bool { return sli[i] < sli[j] })
-	for _, val := range sli {
-		fmt.Printf("%d ", val)
-	}
 }
