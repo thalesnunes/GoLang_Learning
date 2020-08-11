@@ -7,30 +7,66 @@ import (
 	"strings"
 )
 
-type Animal struct {
-	food       string
-	locomotion string
-	noise      string
+type Animal interface {
+	Eat()
+	Move()
+	Speak()
 }
 
-func (ani Animal) Eat() {
-	fmt.Println(ani.food)
+type Cow struct{}
+
+func (cow Cow) Eat() {
+	fmt.Println("grass")
 }
 
-func (ani Animal) Move() {
-	fmt.Println(ani.locomotion)
+func (cow Cow) Move() {
+	fmt.Println("walk")
 }
 
-func (ani Animal) Speak() {
-	fmt.Println(ani.noise)
+func (cow Cow) Speak() {
+	fmt.Println("moo")
+}
+
+type Bird struct{}
+
+func (bird Bird) Eat() {
+	fmt.Println("worms")
+}
+
+func (bird Bird) Move() {
+	fmt.Println("fly")
+}
+
+func (bird Bird) Speak() {
+	fmt.Println("peep")
+}
+
+type Snake struct{}
+
+func (snake Snake) Eat() {
+	fmt.Println("mice")
+}
+
+func (snake Snake) Move() {
+	fmt.Println("slither")
+}
+
+func (snake Snake) Speak() {
+	fmt.Println("hsss")
+}
+
+func makeAction(ani Animal, act string) {
+	actions := map[string]func(){"eat": ani.Eat,
+		"move":  ani.Move,
+		"speak": ani.Speak}
+	actions[act]()
+
 }
 
 func main() {
 
 	scanner := bufio.NewScanner(os.Stdin)
-	cow := Animal{"grass", "walk", "moo"}
-	bird := Animal{"worms", "fly", "peep"}
-	snake := Animal{"mice", "slither", "hsss"}
+	animals := map[string]Animal{}
 	var txt []string
 	for {
 		fmt.Println("If you want to exit, enter 'X'.")
@@ -42,35 +78,27 @@ func main() {
 		}
 		txt = strings.Fields(strings.ToLower(scanner.Text()))
 		switch txt[0] {
-		case "cow":
-			switch txt[1] {
-			case "eat":
-				cow.Eat()
-			case "move":
-				cow.Move()
-			case "speak":
-				cow.Speak()
+		case "newanimal":
+			switch txt[2] {
+			case "cow":
+				animals[txt[1]] = new(Cow)
+			case "bird":
+				animals[txt[1]] = new(Bird)
+			case "snake":
+				animals[txt[1]] = new(Snake)
 			}
-		case "bird":
-			switch txt[1] {
+			fmt.Println("Created it!")
+		case "query":
+			switch txt[2] {
 			case "eat":
-				bird.Eat()
+				makeAction(animals[txt[1]], txt[2])
 			case "move":
-				bird.Move()
+				makeAction(animals[txt[1]], txt[2])
 			case "speak":
-				bird.Speak()
-			}
-		case "snake":
-			switch txt[1] {
-			case "eat":
-				snake.Eat()
-			case "move":
-				snake.Move()
-			case "speak":
-				snake.Speak()
+				makeAction(animals[txt[1]], txt[2])
 			}
 		default:
-			fmt.Println("Enter a valid animal.")
+			fmt.Println("Enter a valid command.")
 		}
 	}
 }
